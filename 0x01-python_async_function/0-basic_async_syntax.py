@@ -6,6 +6,9 @@ import asyncio
 import random
 
 
+"""creates a function"""
+
+
 async def wait_random(max_delay: int = 10) -> float:
     """asynchronous coroutine that takes in an integer argument"""
     delay = random.uniform(0, max_delay)
