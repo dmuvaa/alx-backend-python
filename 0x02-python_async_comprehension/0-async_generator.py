@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-"""Imports a Module"""
+"""Imports several Modules: asyncio, and random"""
 
 import asyncio
 import random
 
 
-"""Create a Function"""
+"""Create a Function for the async generator"""
 
 
 async def async_generator():
