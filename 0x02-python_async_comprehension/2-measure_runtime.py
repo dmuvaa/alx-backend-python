@@ -10,7 +10,7 @@ async_comprehension = __import__('1-async_comprehension').async_comprehension
 """Create a new function"""
 
 
-async def measure_runtime():
+async def measure_runtime() -> float:
     """Function that measures the run time for the coroutines"""
     start_time = time.time()
     await asyncio.gather(*(async_comprehension() for _ in range(4)))
