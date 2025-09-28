@@ -31,12 +31,26 @@ class TestGithubOrgClient(unittest.TestCase):
         ({"repos_url": "http://example.com/repos"}, "http://example.com/repos"),
         ({"repos_url": "http://holberton.io/repos"}, "http://holberton.io/repos"),
     ])
-    @patch.object(GithubOrgClient, 'org', new_callable=property)
-    def test_public_repos_url(self, org_payload, expected_url, mock_org):
-        """Test that _public_repos_url returns the correct URL."""
-        mock_org.return_value = org_payload
-        client = GithubOrgClient("any_org")
-        self.assertEqual(client._public_repos_url, expected_url)
+    
+    @patch("client.get_json")
+    def test_public_repos(self, mock_get_json):
+        """public_repos should return repo names and call deps once."""
+        payload = [{"name": "alpha"}, {"name": "beta"}, {"name": "gamma"}]
+        mock_get_json.return_value = payload
+
+        url = "https://api.github.com/orgs/testorg/repos"
+        with patch.object(
+            GithubOrgClient,
+            "_public_repos_url",
+            new_callable=PropertyMock,
+            return_value=url,
+        ) as mock_url:
+            client = GithubOrgClient("testorg")
+            repos = client.public_repos()
+
+        self.assertEqual(repos, ["alpha", "beta", "gamma"])
+        mock_url.assert_called_once()
+        mock_get_json.assert_called_once_with(url)
 
     @parameterized.expand([
         (["repo1", "repo2", "repo3"], None,
