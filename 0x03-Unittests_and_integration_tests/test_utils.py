@@ -13,12 +13,13 @@ class TestAccessNestedMap(unittest.TestCase):
         nested_map: Mapping
             A nested map"""
     @parameterized.expand([
-        ({"a": 1}, ("a",), 1),
-        ({"a": {"b": 2}}, ("a",), {"b": 2}),
-        ({"a": {"b": 2}}, ("a", "b"), 2),
+        ({}, ("a",), "'a"),
+        ({"a": 1}, ("a", "b"), {"'b'"}),
     ])
     def test_access_nested_map(self, nested_map, path, expected):
-        self.assertEqual(access_nested_map(nested_map, path), expected)
+        with self.assertRaises(KeyError) as cm:
+            access_nested_map(nested_map, path)
+        self.assertEqual(str(cm.exception), expected)
 
 if __name__ == "__main__":
     unittest.main()
