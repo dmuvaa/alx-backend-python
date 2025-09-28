@@ -18,7 +18,6 @@ class TestAccessNestedMap(unittest.TestCase):
             access_nested_map(nested_map, path)
         self.assertEqual(str(cm.exception), expected_msg)
 
-    
 class TestGetJson(unittest.TestCase):
     @parameterized.expand([
         ("http://example.com", {"payloas": "True"}),
@@ -48,9 +47,9 @@ class TestMemoize(unittest.TestCase):
 
         with patch.object(TestClass, "a_method", return_value=42) as mock_method:
             obj = TestClass()
-            self.assertEqual(obj.a_property, 42)  # first access computes & caches
-            self.assertEqual(obj.a_property, 42)  # second access uses cache
-            mock_method.assert_called_once()      # underlying method only called once
+            self.assertEqual(obj.a_property, 42)
+            self.assertEqual(obj.a_property, 42)
+            mock_method.assert_called_once()
 
 if __name__ == "__main__":
     unittest.main()
