@@ -18,8 +18,9 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     @patch("client.get_json")
     def test_org(self, org, mock_get_json):
-        """GithubOrgClient.org returns payload from client.get_json (called once)."""
-        payload = {"login": org, "repos_url": f"https://api.github.com/orgs/{org}/repos"}
+        """GithubOrgClient.org returns payload from client.get_json."""
+        payload = {"login": org,
+            "repos_url": f"https://api.github.com/orgs/{org}/repos"}
         mock_get_json.return_value = payload
 
         client = GithubOrgClient(org)
@@ -55,7 +56,7 @@ class TestGithubOrgClient(unittest.TestCase):
         ({"license": {"key": "other_license"}}, "my_license", False),
     ])
     def test_has_license(self, repo, license_key, expected):
-        """has_license returns True iff repo['license']['key'] == license_key."""
+        """has_license return True if ['license']['key'] == license_key."""
         self.assertEqual(
             GithubOrgClient.has_license(repo, license_key),
             expected,
@@ -82,14 +83,14 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher = patch("requests.get")
         mock_get = cls.get_patcher.start()
 
-        # Fixture only gives repos_url; org login isn't included, but we know it's google.
+        """Fixture only gives repos_url; org login isn't included"""
         org_login = "google"
         org_url = GithubOrgClient.ORG_URL.format(org=org_login)
         repos_url = cls.org_payload["repos_url"]
 
         def _json_for(url):
             if url == org_url:
-                # in real GitHub, org payload would include 'login'; add it here
+                """in real GitHub, org payload include 'login'; add it here"""
                 payload = dict(cls.org_payload)
                 payload.setdefault("login", org_login)
                 return payload
