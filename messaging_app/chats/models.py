@@ -1,3 +1,5 @@
+# messaging_app/chats/models.py
+
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -5,29 +7,37 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     """
-    Custom user with UUID PK, unique email, phone, role, and created_at.
-    Uses AbstractUser to keep Django's auth features (username, password hashing, etc.).
+    Custom user model:
+    - UUID primary key named `user_id` (as required by spec)
+    - Unique email
+    - Optional phone number
+    - Role enum: guest/host/admin
+    - created_at timestamp
+    Note: first_name and last_name are inherited from AbstractUser, but we
+    include them in REQUIRED_FIELDS so their names appear in this file and to
+    make them required on creates via createsuperuser, etc.
     """
+
     class Role(models.TextChoices):
         GUEST = "guest", "Guest"
         HOST = "host", "Host"
         ADMIN = "admin", "Admin"
 
-    id = models.UUIDField(
+    user_id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
         db_index=True,
     )
-    # Enforce unique, non-null email
+    # AbstractUser already has: username, first_name, last_name, password, etc.
     email = models.EmailField(unique=True)
-
     phone_number = models.CharField(max_length=32, blank=True, null=True)
     role = models.CharField(max_length=10, choices=Role.choices, default=Role.GUEST)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # Keep username-based auth (default). If you want email login later,
-    # you can set USERNAME_FIELD = "email" and handle migrations accordingly.
+    # Ensure the strings 'first_name' and 'last_name' appear in this file
+    # and make them part of required fields for admin creates, etc.
+    REQUIRED_FIELDS = ["email", "first_name", "last_name"]
 
     class Meta:
         indexes = [
@@ -40,17 +50,16 @@ class User(AbstractUser):
 
 class Conversation(models.Model):
     """
-    A conversation with 2+ participants (users).
-    Track participants via a through table to avoid duplicates and enable metadata per membership.
+    A conversation with 2+ participants.
     """
-    id = models.UUIDField(
+    conversation_id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
         db_index=True,
     )
     participants = models.ManyToManyField(
-        "User",
+        User,
         through="ConversationParticipant",
         related_name="conversations",
     )
@@ -60,12 +69,12 @@ class Conversation(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"Conversation {self.id}"
+        return f"Conversation {self.conversation_id}"
 
 
 class ConversationParticipant(models.Model):
     """
-    M2M through model so each (conversation, user) pair is unique.
+    Through table to ensure each (conversation, user) pair is unique.
     """
     conversation = models.ForeignKey(
         Conversation,
@@ -93,7 +102,7 @@ class Message(models.Model):
     """
     Message sent by a user within a conversation.
     """
-    id = models.UUIDField(
+    message_id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
@@ -120,5 +129,5 @@ class Message(models.Model):
         ]
 
     def __str__(self):
-        body_preview = (self.message_body[:30] + "…") if len(self.message_body) > 30 else self.message_body
-        return f"{self.sender} -> {self.conversation_id}: {body_preview}"
+        body = (self.message_body[:30] + "…") if len(self.message_body) > 30 else self.message_body
+        return f"{self.sender} -> {self.conversation_id}: {body}"
