@@ -18,7 +18,7 @@ class TestAccessNestedMap(unittest.TestCase):
     ])
     def test_access_nested_map_exception(self, nested_map, path, expected_msg):
         """
-        Ensure KeyError (with expected message) 
+        Ensure KeyError (with expected message)
         is raised for missing keys.
         """
         with self.assertRaises(KeyError) as cm:
@@ -47,7 +47,7 @@ class TestMemoize(unittest.TestCase):
     """Tests for utils.memoize decorator."""
 
     def test_memoize(self):
-        """a_method should be called once; 
+        """a_method should be called once;
         a_property should return cached value."""
         class TestClass:
             """Helper class to exercise memoize."""
