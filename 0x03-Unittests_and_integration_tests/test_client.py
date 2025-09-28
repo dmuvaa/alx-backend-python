@@ -4,7 +4,6 @@
 import unittest
 from unittest.mock import patch, PropertyMock
 from parameterized import parameterized
-
 from client import GithubOrgClient
 
 
@@ -17,7 +16,6 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     @patch("client.get_json")
     def test_org(self, org, mock_get_json):
-        """org should return the payload from client.get_json; called once."""
         payload = {"login": org, "id": 12345}
         mock_get_json.return_value = payload
 
@@ -32,7 +30,6 @@ class TestGithubOrgClient(unittest.TestCase):
         ({"repos_url": "http://holberton.io/repos"}, "http://holberton.io/repos"),
     ])
     def test_public_repos_url(self, org_payload, expected_url):
-        """_public_repos_url should pull repos_url from org payload."""
         with patch.object(
             GithubOrgClient,
             "org",
@@ -43,7 +40,6 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(client._public_repos_url, expected_url)
 
     @parameterized.expand([
-        # expected_names, license_key, API payload
         (["repo1", "repo2", "repo3"], None,
          [{"name": "repo1"}, {"name": "repo2"}, {"name": "repo3"}]),
         (["repo1", "repo3"], "apache-2.0",
@@ -53,7 +49,6 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     @patch("client.get_json")
     def test_public_repos(self, expected, license_key, api_payload, mock_gj):
-        """public_repos returns names; mocks URL and get_json, called once."""
         repos_url = "https://api.github.com/orgs/testorg/repos"
         mock_gj.return_value = api_payload
 
