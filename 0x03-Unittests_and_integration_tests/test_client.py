@@ -52,4 +52,8 @@ class TestGithubOrgClient(unittest.TestCase):
             for repo in expected_repos
         ]
         client = GithubOrgClient("any_org")
-        self.assertEqual(client.public_repos(license=license_key), expected_re
+        self.assertEqual(client.public_repos(license=license_key), expected_repos)
+        mock_repos_payload.assert_called_once()
+
+if __name__ == "__main__":
+    unittest.main()
