@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-
 """Unittests for client."""
 
 import unittest
-from unittest.mock import patch, Mock, PropertyMock
-from client import GithubOrgClient
+from unittest.mock import patch, PropertyMock
 from parameterized import parameterized
+
+from client import GithubOrgClient
+
 
 class TestGithubOrgClient(unittest.TestCase):
     """Tests for GithubOrgClient class."""
@@ -22,15 +23,13 @@ class TestGithubOrgClient(unittest.TestCase):
 
         client = GithubOrgClient(org)
         self.assertEqual(client.org, payload)
-
         mock_get_json.assert_called_once_with(
             f"https://api.github.com/orgs/{org}"
         )
 
     @parameterized.expand([
         ({"repos_url": "http://example.com/repos"}, "http://example.com/repos"),
-        ({"repos_url": "http://holberton.io/repos"},
-         "http://holberton.io/repos"),
+        ({"repos_url": "http://holberton.io/repos"}, "http://holberton.io/repos"),
     ])
     def test_public_repos_url(self, org_payload, expected_url):
         """_public_repos_url should pull repos_url from org payload."""
@@ -46,9 +45,7 @@ class TestGithubOrgClient(unittest.TestCase):
     @parameterized.expand([
         # expected_names, license_key, API payload
         (["repo1", "repo2", "repo3"], None,
-         [{"name": "repo1"},
-          {"name": "repo2"},
-          {"name": "repo3"}]),
+         [{"name": "repo1"}, {"name": "repo2"}, {"name": "repo3"}]),
         (["repo1", "repo3"], "apache-2.0",
          [{"name": "repo1", "license": {"key": "apache-2.0"}},
           {"name": "repo2", "license": {"key": "mit"}},
@@ -75,4 +72,4 @@ class TestGithubOrgClient(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)
