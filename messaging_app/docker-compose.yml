@@ -42,4 +42,4 @@ services:
         condition: service_healthy
 
 volumes:
-  db_data:
+  mysql_data: {}
