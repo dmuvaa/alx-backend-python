@@ -6,6 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE 1 \
     PIP_NO_CACHE_DIR=1 \
 
 # Set working directory
+RUN mkdir -p /app
 WORKDIR /app
 
 # Install dependencies
